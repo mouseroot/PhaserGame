@@ -16,7 +16,8 @@ var player = null,
 	numPlayersText,
 	usedUsername = false,
 	newPlayer = null,
-	selectedSkin;
+	selectedSkin,
+	message;
 
 function onConnect() {
 	console.log("Connecting as",username);
@@ -116,11 +117,17 @@ function onUsedUsername(data) {
 }
 
 function onMsg(data) {
-	var msg = game.add.text(0,0,data.text);
-	msg.anchor.set(0.5);
+	message.text = data.text;
+	message.anchor.set(0.5);
 	var msgPlayer = getPlayerById(data.id);
 	console.log(msgPlayer);
-	msg.position.copyFrom(msgPlayer);
+	message.position.set(msgPlayer.x, msgPlayer.y - 10);
+	game.add.existing(message);
+	var twn = game.add.tween(message).to({ alpha: 0}, 2000,Phaser.Easing.Linear.None, true,0, 0, false);
+		twn.onComplete.add(function(obj, tween){
+			tween.stop();
+			//obj.destroy();
+		}, this);
 }
 
 function connect() {
@@ -195,6 +202,7 @@ function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cursors = game.input.keyboard.createCursorKeys();
 	remotePlayers = game.add.group();
+	message = game.make.text(0,0,"",{fill:"#c11",font: "13pt Consolas"});
 	remotePlayers.enableBody = true;
 
 	//connect();

@@ -1,0 +1,8 @@
+{
+	"name": "multi_app",
+	"private": true,
+	"dependencies": {
+		"socket.io": "latest",
+		"express": "latest"
+	}
+}

@@ -116,8 +116,7 @@ function onUsedUsername(data) {
 }
 
 function onMsg(data) {
-	console.log(data.text);
-	var msg = game.make.text(0,0,data.text);
+	var msg = game.add.text(0,0,data.text);
 	msg.anchor.set(0.5);
 	var msgPlayer = getPlayerById(data.id);
 	console.log(msgPlayer);

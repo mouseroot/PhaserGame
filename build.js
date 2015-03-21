@@ -17,7 +17,8 @@ var player = null,
 	usedUsername = false,
 	newPlayer = null,
 	selectedSkin,
-	message;
+	message,
+	playername;
 
 function onConnect() {
 	console.log("Connecting as",username);
@@ -69,8 +70,10 @@ function onList(data) {
 		if(player.skin == 3) {
 			newPlayer = game.add.sprite(player.x, player.y, "player_blue");
 		}
-
+		newPlayer.name = game.add.text(newPlayer.x, newPlayer.y,player.username,{fill:"#c11",font: "10pt Consolas"});
+		newPlayer.name.anchor.set(0.5);
 		newPlayer.scale.set(0.7);
+		newPlayer.anchor.set(0.5);
 		newPlayer.alpha = 0.4;
 		newPlayer.id = player.id;
 		newPlayer.username = player.username;
@@ -80,6 +83,7 @@ function onList(data) {
 		newPlayer.animations.add("left",[4,5,6,7],7,true);
 		newPlayer.animations.add("right",[8,9,10,11],7,true);
 		newPlayer.animations.add("up",[12,13,14,15],7,true);
+		remotePlayers.add(newPlayer.name);
 		remotePlayers.add(newPlayer);
 	}
 	}
@@ -101,6 +105,7 @@ function onMove(data) {
 	}
 	movePlayer.x = data.x;
 	movePlayer.y = data.y;
+	movePlayer.name.position.set(movePlayer.x, movePlayer.y - 22);
 }
 
 function onKill(data) {
@@ -132,6 +137,8 @@ function onMsg(data) {
 
 function connect() {
 	username = txtUsername.value;
+	playername.text = username;
+	txtUsername.setAttribute("disabled","disabled");
 	if(username !==  '') {
 		socket = io.connect({
 			port: 8000,
@@ -183,10 +190,12 @@ function createPlayer(i) {
 	game.physics.arcade.enable(player);
 	player.body.collideWorldBounds = true;
 	player.scale.set(0.7);
+	player.anchor.set(0.5);
 	player.animations.add("down",[0,1,2,3],7,true);
     player.animations.add("left",[4,5,6,7],7,true);
     player.animations.add("right",[8,9,10,11],7,true);
     player.animations.add("up",[12,13,14,15],7,true);
+    game.add.existing(playername);
 	game.add.existing(player);
 }
 
@@ -203,10 +212,12 @@ function create() {
 	cursors = game.input.keyboard.createCursorKeys();
 	remotePlayers = game.add.group();
 	message = game.make.text(0,0,"",{fill:"#c11",font: "13pt Consolas"});
+	playername = game.make.text(0,0,"",{fill:"#1c1", font: "10pt Consolas"});
+	playername.anchor.set(0.5);
 	remotePlayers.enableBody = true;
 
 	//connect();
-	game.time.events.loop(Phaser.Timer.SECOND * 1.5,function(){
+	game.time.events.loop(Phaser.Timer.SECOND,function(){
 		if(hasConnected) {
 			socket.emit("list",null);
 		}
@@ -218,8 +229,10 @@ function create() {
 }
 
 function update() {
-	if(player != null) {
-	//game.physics.arcade.collide(player,remotePlayers,null,null ,this);
+	playername.text = txtUsername.value;
+	playername.position.set(player.x, player.y - 22);
+
+	if(player != null) {	
 
 		if(!cursors.left.isDown && !cursors.right.isDown && !cursors.up.isDown && !cursors.down.isDown) {
 			player.animations.stop();

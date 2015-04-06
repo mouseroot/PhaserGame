@@ -1,6 +1,7 @@
 {
 	"name": "multi_app",
 	"private": true,
+	"main": "main.js",
 	"dependencies": {
 		"socket.io": "latest",
 		"express": "latest"

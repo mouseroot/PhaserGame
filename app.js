@@ -140,6 +140,6 @@ function onMove(data) {
 //Websocket
 io.on("connection",onConnection);
 
-http.listen(8000, function(){
+http.listen(process.env.PORT, function(){
 	console.log("Listening on 8000");
 });
